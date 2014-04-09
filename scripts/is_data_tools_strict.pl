@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl -w
 #
-# is_data_tools_strict.pl - D.Bianco, ESRI
+# is_data_tools_strict.pl - D.Bianco 2007
 #
 use strict;
 use DBI;
