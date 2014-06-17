@@ -16,6 +16,7 @@ use Proc::Simple;
 my $LOGHOME = "$ENV{LOGHOME}";
 my $EXIT_VALUE = 0;
 my $SQL_ERROR = undef;
+my $RO_USER = "foo";
 $|=1;
 my $ExecCmdCount=0;
 my $ResultString = "[ ERROR ]";
@@ -872,9 +873,9 @@ sub alterRegNone {
     return $rv;
     ## this function is depracated
 }
-sub grantADOL {
+sub grantRO_USER {
     $Target = shift;
-    my $grant_user = shift || "ADOL";
+    my $grant_user = shift || "FOO";
     $CmdString = "Grant $grant_user access ..........................................................................................";
     my $rv = &ExecCmd("sdetable -o grant -t $Target -A SELECT -U $grant_user $sde_connection");
     return $rv;
@@ -989,10 +990,10 @@ sub getLayerCount {
  
 
 
-sub describeAsADOL {
+sub describeAsRO_USER {
 	my $layer = shift;
-	$CmdString = "Describing layer as ADOL ........................................................................................";
-	my $cmd = qq{ sdetable -o describe -t $user.$layer -s $server -u adol -p adol };
+	$CmdString = "Describing layer as $RO_USER ........................................................................................";
+	my $cmd = qq{ sdetable -o describe -t $user.$layer -s $server -u $RO_USER -p $RO_USER };
 	my $rv =&ExecCmd("$cmd");
 	return $rv;
 }
@@ -1196,9 +1197,9 @@ sub isDone {
     my $isDone="FALSE";
     
     if ("$arg" eq "grant") { 
-        my $sql = qq{ select grantee from user_tab_privs where table_name = upper('$layer') and grantee = 'ADOL' };
+        my $sql = qq{ select grantee from user_tab_privs where table_name = upper('$layer') and grantee = '$RO_USER' };
         my @ans = &readQuerySingle("$sql");
-        if ("$ans[0]" =~ /adol/i) { $isDone = "TRUE"; }
+        if ("$ans[0]" =~ /$RO_USER/i) { $isDone = "TRUE"; }
     }
     if ("$arg" eq "analyze") {
         my $sql = qq{ select num_rows from user_tables where table_name = upper('$layer') };
@@ -1290,7 +1291,7 @@ sub get_layers {
     my $where;
     $user =~ tr/[a-z]/[A-Z]/;
     &sqlConnect("$user/$pass\@$host");
-    if ($user eq "adol") {
+    if ($user eq "$RO_USER") {
         $where = "";
     } else {
         $where = qq{ where owner = '$user' };

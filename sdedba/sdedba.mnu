@@ -1,0 +1,105 @@
+#!/usr/local/bin/perl
+use File::Basename;
+$|=1;
+
+1;
+&mainMenu;
+
+sub mainMenu {
+$run=1;
+while ("$run" == 1) {
+$run=1;
+system "clear\n";
+print "\n";
+my $date = `date`;
+my $pwd = `pwd`; 
+$pwd = basename($pwd);
+
+print "$date\n"; print "\tCurrent Project: $pwd\n";
+print "\tMAIN MENU";
+print "\n\n\n";
+print <<"EOT";
+			a. Specify Layer
+			b. Change project
+			c. Create new file
+
+EOT
+$a="d";
+foreach $filename (<*.txt>) {
+	$file{$a} = "$filename";
+	print "\t\t\t$a. $filename\n";
+	$a++;
+}
+
+
+print "\n\t\t     exit. Move on to bigger and better things\n";
+
+print "\n\n";
+print "Please make a choice: ";
+chomp($input=<>);
+
+if ("$input" eq "exit") { $run=0; print "goodbye!\n\n"; exit(1);}
+
+if ("$input" eq "b") { 
+	print "Enter new project: ";
+	chomp($newdir=<>);
+	chdir("/data1/projects/$newdir");
+	#system "cd $newdir\n";
+}
+if ("$input" =~ /d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z/) {
+	print "\n";
+	system "more $file{$input}\n";
+	print "\nConfirm.  Is this the file you want? (y)es,(n)o,(e)dit,(d)elete ";
+	chomp($fileconfirm=<>);
+	if ("$fileconfirm" eq "y") { 
+		&cmdMenu; 
+	} elsif ("$fileconfirm" eq "e") { 
+		system "vi $file{$input}\n"; 
+	} elsif ("$fileconfirm" eq "d") { 
+		print "DELETE?!?!?!?!?!?!?!?\n"; sleep(2); print "Dont worry, nothing is getting deleted just yet. :)\n"; sleep(3); 
+	}
+}
+
+} # end while 1
+} # end mainMenu
+
+sub cmdMenu {
+
+$run=1;
+while ("$run" == 1) {
+$run=1;
+system "clear\n";
+print "\n";
+my $date = `date`;
+my $pwd = `pwd`;
+$pwd = basename($pwd);
+
+print "$date\n"; print "Current Project: $pwd\n";
+print "\tCOMMAND MENU";
+print "\n\n\n";
+print <<"EOT";
+                        a. alter_layer.pl
+                        b. export_layer.pl
+                        c. copysde.pl
+			d. dropnswap.pl
+			e. sdx_loader.pl
+			f. shapeloader.pl
+			g. create_view.pl
+
+EOT
+
+print "\t\t     main. Return to main menu\n";
+print "\t\t     exit. Move on to bigger and better things\n";
+
+print "\n\n";
+print "Please make a choice: ";
+chomp($input=<>);
+
+if ("$input" eq "exit") { $run=0; print "goodbye!\n\n"; exit(1);}
+if ("$input" eq "main") { $run=0; &mainMenu; } else { print "These options dont do anything.\n"; sleep(3); }
+
+
+}
+
+} #end sub cmdMenu
+
